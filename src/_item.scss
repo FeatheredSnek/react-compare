@@ -1,0 +1,85 @@
+@use 'vars';
+@use 'base';
+
+.item {
+  @extend %block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border: vars.$item-border;
+  background-color: vars.$item-body;
+  outline: none;
+}
+
+.item:hover {
+  outline: vars.$action-primary solid 0.1rem;
+}
+
+.item-header {
+  width: 100%;
+  font-size: 1.6rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .badges {
+    div {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      background-color: goldenrod;
+      border-radius: 100%;
+      margin-left: 0.6rem;
+    }
+  }
+}
+
+.item-info {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  div {
+    display: inline-block;
+    border-right: 1px solid black;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem
+  }
+  div:first-child {
+    padding-left: 0;
+  }
+  div:last-child {
+    border: none;
+  }
+}
+
+.item-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.8rem;
+  margin: 0.6rem 0 0.2rem 0;
+  button {
+    width: 100%;
+    height: 2.5rem;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    font: 0.8rem vars.$fonts;
+    border: none;
+  }
+  .expand {
+    background-color: vars.$action-secondary;
+  }
+  .expand:hover {
+    background-color: vars.$action-secondary-active;
+  }
+  .contact {
+    font-weight: bold;
+    color: vars.$text-inverted;
+    background-color: vars.$action-primary;
+  }
+  .contact:hover {
+    background-color: vars.$action-primary-active;
+  }
+}

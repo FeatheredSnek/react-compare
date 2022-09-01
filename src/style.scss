@@ -1,0 +1,55 @@
+@use 'vars';
+@use 'item';
+@use 'controls';
+@use 'graph';
+
+// setup
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 20px;
+}
+
+body {
+  background-color: vars.$window;
+  font: 0.8rem vars.$fonts;
+  color: vars.$text;
+}
+
+header {
+  margin: 1rem 0;
+}
+
+// grid system
+
+@mixin sticky {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+}
+
+.app {
+  max-width: 1280px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 16rem auto 16rem;
+  grid-template-areas: "options list graphs";
+  column-gap: 2.5rem;
+}
+
+.list {
+  grid-area: list;
+}
+
+.options {
+  @include sticky;
+  grid-area: options;
+}
+
+.graphs {
+  @include sticky;
+  grid-area: graphs;
+}

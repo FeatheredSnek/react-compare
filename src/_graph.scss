@@ -1,0 +1,38 @@
+@use 'vars';
+
+.graph {
+  padding: 1.5rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  height: 8rem;
+  div {
+    flex-grow: 1;
+  }
+  div:hover {
+    outline: vars.$action-primary solid 0.1rem;
+    outline-offset: 1px;
+  }
+}
+
+.v0 {
+  width: auto;
+  height: 20%;
+  background-color: #79D9D9;
+}
+.v1 {
+  width: auto;
+  height: 40%;
+  background-color: #61B6D0;
+}
+.v2 {
+  width: auto;
+  height: 100%;
+  background-color: #619BD0;
+}
+.v3 {
+  width: auto;
+  height: 70%;
+  background-color: #45B1B1;
+}

@@ -90,8 +90,8 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
+      <div class="app">
+        <div class="options">
           <Filters 
             minPrice={this.computeMinPrice()} 
             maxPrice={this.computeMaxPrice()}
@@ -109,6 +109,17 @@ class App extends React.Component {
           providers={this.computeProviders()} 
           sorting={this.state.sorting}
         />
+        <div class="graphs">
+          <Graph
+            header="Cost per month"
+          />
+          <Graph
+            header="Available clusters"
+          />
+          <Graph
+            header="Memory per cluster"
+          />
+        </div>
       </div>
     )
   }
@@ -132,11 +143,8 @@ function ProvidersList(props) {
   )
   if (providerItems.length > 0) {
     return (
-      <div>
-        <h3>List sorted by {currentSorting}</h3>
-        <div>
-          {providerItems}
-        </div>
+      <div class="list">
+        {providerItems}
       </div>
     )
   }
@@ -154,10 +162,40 @@ function ProvidersList(props) {
 
 function ProviderItem(props) {
   return (
-    <div>
-      <h2>name: {props.name}, id: {props.id}</h2>
-      <h3>Cost per month: {props.price.toString()}</h3>
-      <h3>Available clusters: {props.clusters.toString()}</h3>
+    <div class="item">
+      <div class="item-header">
+        <div>{props.name}</div>
+        <div class="badges">
+          <div/>
+          <div/>
+        </div>
+      </div>
+      <div class="item-info">
+        <div>
+          <strong>${props.price.toString()}</strong>
+          <br/>
+          per month
+        </div>
+        <div>
+          <strong>{props.clusters.toString()}</strong>
+          <br/>
+          clusters
+        </div>
+        <div>
+          <strong>{props.memory.toString()}</strong>
+          <br/>
+          MB/cluster
+        </div>
+      </div>
+      <div class="item-buttons">
+        <button class="expand">
+          See more
+        </button>
+        <button class="contact">
+          Contact provider
+        </button>
+      </div>
+      
     </div>
   )
 }
@@ -190,47 +228,53 @@ class Filters extends React.Component {
     })
     this.props.onFilterReset()
   }
-
+  //{`(from ${this.props.minPrice} to ${this.props.maxPrice})`}
   render() {
     return (
-      <fieldset>
-        <legend>Filters:</legend>
-        <div>
-          <input 
-            id="price-range" 
-            type="range"
-            step="1"
-            min={this.props.minPrice} 
-            max={this.props.maxPrice}
-            onChange={this.handlePriceChange}
-          />
-          <strong>
-            {this.state.currentPriceFilterValue}
-          </strong>
-          <label htmlFor="price-range">
-            Max price {`(from ${this.props.minPrice} to ${this.props.maxPrice})`}
-          </label>
-        </div>
-        <div>
-          <input 
-            id="cluster-range" 
-            type="range"
-            step="1"
-            min={this.props.minClusters} 
-            max={this.props.maxClusters}
-            onChange={this.handleClustersChange}
-          />
-          <label htmlFor="cluster-range">
-            <strong>
-              {this.state.currentClustersFilterValue}
-            </strong>
-            Clusters {`(from ${this.props.minClusters} to ${this.props.maxClusters})`}
-          </label>
-        </div>
-        <button id="clear" type="button" onClick={this.handleResetClick}>
-          Clear filters
-        </button>
-      </fieldset>
+      <div class="pane">
+        <h2>Filters</h2>
+        <fieldset class="pane-contents filter-settings">
+          <div class="setting">
+            <input 
+              id="price-range" 
+              type="range"
+              step="1"
+              min={this.props.minPrice} 
+              max={this.props.maxPrice}
+              onChange={this.handlePriceChange}
+            />
+            <div class="filter-setting-label">
+              <label htmlFor="price-range">
+                Cost per month 
+              </label>
+              <label htmlFor="price-range">
+                max <strong>${this.state.currentPriceFilterValue}</strong>
+              </label>
+            </div>
+          </div>
+          <div class="setting">
+            <input 
+              id="cluster-range" 
+              type="range"
+              step="1"
+              min={this.props.minClusters} 
+              max={this.props.maxClusters}
+              onChange={this.handleClustersChange}
+            />
+            <div class="filter-setting-label">
+              <label htmlFor="cluster-range">
+                Available clusters 
+              </label>
+              <label htmlFor="cluster-range">
+                min <strong>${this.state.currentClustersFilterValue}</strong>
+              </label>
+            </div>
+          </div>
+          {/* <button id="clear" type="button" onClick={this.handleResetClick}>
+            Clear filters
+          </button> */}
+        </fieldset>
+      </div>
     )
   }
 }
@@ -252,49 +296,65 @@ class Sorting extends React.Component {
 
   render() {
     return (
-      <fieldset>
-        <legend>Sort by:</legend>
-        <div>
-          <input 
-            type="radio" 
-            id="name" 
-            name="sorting" 
-            onChange={this.handleSelectionChange}
-            defaultChecked
-          />
-          <label htmlFor="name">Provider name</label>
-        </div>
-        <div>
-          <input 
-            type="radio" 
-            id="price" 
-            name="sorting" 
-            onChange={this.handleSelectionChange}
-          />
-          <label htmlFor="price">Price per month</label>
-        </div>
-        <div>
-          <input 
-            type="radio" 
-            id="clusters" 
-            name="sorting" 
-            onChange={this.handleSelectionChange}
-          />
-          <label htmlFor="clusters">Available clusters</label>
-        </div>
-        <div>
-          <input 
-            type="radio" 
-            id="memory" 
-            name="sorting" 
-            onChange={this.handleSelectionChange}
-          />
-          <label htmlFor="memory">Memory per cluster</label>
-        </div>
-      </fieldset>
+      <div class="pane">
+        <h2>Sort by:</h2>
+        <fieldset class="pane-contents sorting-options">
+          <div>
+            <input 
+              type="radio" 
+              id="name" 
+              name="sorting" 
+              onChange={this.handleSelectionChange}
+              defaultChecked
+            />
+            <label htmlFor="name">Provider name</label>
+          </div>
+          <div>
+            <input 
+              type="radio" 
+              id="price" 
+              name="sorting" 
+              onChange={this.handleSelectionChange}
+            />
+            <label htmlFor="price">Price per month</label>
+          </div>
+          <div>
+            <input 
+              type="radio" 
+              id="clusters" 
+              name="sorting" 
+              onChange={this.handleSelectionChange}
+            />
+            <label htmlFor="clusters">Available clusters</label>
+          </div>
+          <div>
+            <input 
+              type="radio" 
+              id="memory" 
+              name="sorting" 
+              onChange={this.handleSelectionChange}
+            />
+            <label htmlFor="memory">Memory per cluster</label>
+          </div>
+        </fieldset>
+      </div>
     )
   }
 }
 
-const appRoot = ReactDOM.createRoot(document.getElementById('app'));
+function Graph(props) {
+  return(
+    <div class="pane">
+      <h2>{props.header}</h2>
+      <div class="pane-contents graph">
+        <div class="v0"></div>
+        <div class="v1"></div>
+        <div class="v2"></div>
+        <div class="v3"></div>
+      </div>
+    </div>
+  )
+}
+
+const appRoot = ReactDOM.createRoot(document.getElementById('root'));
 appRoot.render(<App/>);
