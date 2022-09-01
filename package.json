@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "npx http-server",
-    "bld": "npx babel src --out-dir public --presets react-app/prod"
+    "bld": "npx babel src --out-dir public --presets react-app/prod & npx sass src/style.scss public/style.css"
   },
   "author": "",
   "license": "ISC",
