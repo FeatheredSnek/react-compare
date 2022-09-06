@@ -32,22 +32,33 @@ class App extends React.Component {
     super(props);
     this.state = {
       providers: providersData,
+      displayedProviders: providersData,
       priceFilterValue: null,
       clustersFilterValue: null,
-      sorting: 'name'
+      sorting: 'name',
+      // the data has already been preloaded, compute min/max values
+      // through componentDidMount if it's not the case
+      minPrice: Math.ceil(getValueBounds(providersData, 'price').min),
+      maxPrice: Math.floor(getValueBounds(providersData, 'price').max),
+      minClusters: getValueBounds(providersData, 'clusters').min,
+      maxClusters: getValueBounds(providersData, 'clusters').max,
+      maxMemory: getValueBounds(providersData, 'memory').max,
     }
   }
 
   handleFilterPriceChange = (userMaxPrice) => {
     this.setState({priceFilterValue: userMaxPrice})
+    this.updateProviderList()
   }
 
   handleFilterClustersChange = (userClusters) => {
     this.setState({clustersFilterValue: userClusters})
+    this.updateProviderList()
   }
 
   handleSortingChange = (userSorting) => {
     this.setState({sorting: userSorting})
+    this.updateProviderList()
   }
 
   handleFilterReset = () => {
@@ -55,20 +66,31 @@ class App extends React.Component {
       priceFilterValue: null,
       clustersFilterValue: null
     })
+    this.updateProviderList()
+  }
+
+  // this helper is a separate setState call that is always fired 
+  // after a certain state filter/sort setting has been applied
+  updateProviderList = () => {
+    this.setState({displayedProviders: this.computeProviders()})
   }
   
   computeProviders = () => {
-    let filtered = [...this.state.providers];
+    let filtered
     if (!(isNaN(this.state.priceFilterValue) || this.state.priceFilterValue === null)) {
-      filtered = filtered.filter(
+      filtered = this.state.providers.filter(
         el => el.price <= this.state.priceFilterValue
       )
+    }
+    else {
+      filtered = this.state.providers
     }
     if (!(isNaN(this.state.clustersFilterValue) || this.state.clustersFilterValue === null)) {
       filtered = filtered.filter(
         el => el.clusters >= this.state.clustersFilterValue
       )
     }
+    sortByObjectProperty(filtered, this.state.sorting)
     return filtered
   }
 
@@ -88,15 +110,19 @@ class App extends React.Component {
     return getValueBounds(this.state.providers, 'clusters').max
   }
 
+  computeMaxMemory = () => {
+    return getValueBounds(this.state.providers, 'memory').max
+  }
+
   render() {
     return (
-      <div class="app">
-        <div class="options">
+      <div className="app">
+        <div className="options">
           <Filters 
-            minPrice={this.computeMinPrice()} 
-            maxPrice={this.computeMaxPrice()}
-            minClusters={this.computeMinClusters()}
-            maxClusters={this.computeMaxClusters()}
+            minPrice={this.state.minPrice} 
+            maxPrice={this.state.maxPrice}
+            minClusters={this.state.minClusters}
+            maxClusters={this.state.maxClusters}
             onFilterPriceChange={this.handleFilterPriceChange}
             onFilterClustersChange={this.handleFilterClustersChange}
             onFilterReset={this.handleFilterReset}
@@ -106,18 +132,27 @@ class App extends React.Component {
           />
         </div>
         <ProvidersList 
-          providers={this.computeProviders()} 
+          providers={this.state.displayedProviders} 
           sorting={this.state.sorting}
         />
-        <div class="graphs">
+        <div className="graphs">
           <Graph
             header="Cost per month"
+            graphProperty="price"
+            maxValue={this.state.maxPrice}
+            values={this.state.displayedProviders}
           />
           <Graph
             header="Available clusters"
+            graphProperty="clusters"
+            maxValue={this.state.maxClusters}
+            values={this.state.displayedProviders}
           />
           <Graph
             header="Memory per cluster"
+            graphProperty="memory"
+            maxValue={this.state.maxMemory}
+            values={this.state.displayedProviders}
           />
         </div>
       </div>
@@ -129,7 +164,7 @@ class App extends React.Component {
 function ProvidersList(props) {
   const currentProviders = props.providers
   const currentSorting = props.sorting
-  sortByObjectProperty(currentProviders, currentSorting)
+  // sortByObjectProperty(currentProviders, currentSorting)
   const providerItems = currentProviders.map((provider) => 
     <ProviderItem 
       key={provider.id}
@@ -143,7 +178,7 @@ function ProvidersList(props) {
   )
   if (providerItems.length > 0) {
     return (
-      <div class="list">
+      <div className="list">
         {providerItems}
       </div>
     )
@@ -162,15 +197,15 @@ function ProvidersList(props) {
 
 function ProviderItem(props) {
   return (
-    <div class="item">
-      <div class="item-header">
+    <div className="item">
+      <div className="item-header">
         <div>{props.name}</div>
-        <div class="badges">
+        <div className="badges">
           <div/>
           <div/>
         </div>
       </div>
-      <div class="item-info">
+      <div className="item-info">
         <div>
           <strong>${props.price.toString()}</strong>
           <br/>
@@ -187,11 +222,11 @@ function ProviderItem(props) {
           MB/cluster
         </div>
       </div>
-      <div class="item-buttons">
-        <button class="expand">
+      <div className="item-buttons">
+        <button className="expand">
           See more
         </button>
-        <button class="contact">
+        <button className="contact">
           Contact provider
         </button>
       </div>
@@ -231,10 +266,10 @@ class Filters extends React.Component {
   //{`(from ${this.props.minPrice} to ${this.props.maxPrice})`}
   render() {
     return (
-      <div class="pane">
+      <div className="pane">
         <h2>Filters</h2>
-        <fieldset class="pane-contents filter-settings">
-          <div class="setting">
+        <fieldset className="pane-contents filter-settings">
+          <div className="setting">
             <input 
               id="price-range" 
               type="range"
@@ -243,7 +278,7 @@ class Filters extends React.Component {
               max={this.props.maxPrice}
               onChange={this.handlePriceChange}
             />
-            <div class="filter-setting-label">
+            <div className="filter-setting-label">
               <label htmlFor="price-range">
                 Cost per month 
               </label>
@@ -252,7 +287,7 @@ class Filters extends React.Component {
               </label>
             </div>
           </div>
-          <div class="setting">
+          <div className="setting">
             <input 
               id="cluster-range" 
               type="range"
@@ -261,7 +296,7 @@ class Filters extends React.Component {
               max={this.props.maxClusters}
               onChange={this.handleClustersChange}
             />
-            <div class="filter-setting-label">
+            <div className="filter-setting-label">
               <label htmlFor="cluster-range">
                 Available clusters 
               </label>
@@ -296,9 +331,9 @@ class Sorting extends React.Component {
 
   render() {
     return (
-      <div class="pane">
+      <div className="pane">
         <h2>Sort by:</h2>
-        <fieldset class="pane-contents sorting-options">
+        <fieldset className="pane-contents sorting-options">
           <div>
             <input 
               type="radio" 
@@ -343,18 +378,31 @@ class Sorting extends React.Component {
 }
 
 function Graph(props) {
+  const bars = props.values.map(el => {
+    const barStyle = {
+      backgroundColor: '#79D9D9',
+      height: `${el[props.graphProperty] / props.maxValue * 100}%`
+    }
+    return (
+      <div style={barStyle} key={el.id}></div>
+    )
+  })
   return(
-    <div class="pane">
+    <div className="pane">
       <h2>{props.header}</h2>
-      <div class="pane-contents graph">
-        <div class="v0"></div>
-        <div class="v1"></div>
-        <div class="v2"></div>
-        <div class="v3"></div>
+      <div className="pane-contents graph">
+        {bars}
       </div>
     </div>
   )
 }
+
+// class Graph extends React.Component {
+//   constructor(props) {
+//     super(props)
+
+//   }
+// }
 
 const appRoot = ReactDOM.createRoot(document.getElementById('root'));
 appRoot.render(<App/>);
