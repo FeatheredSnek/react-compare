@@ -1,6 +1,10 @@
 @use 'vars';
 @use 'base';
 
+@mixin highlight {
+  outline: vars.$action-primary solid 0.1rem;  
+}
+
 .item {
   @extend %block;
   display: flex;
@@ -12,10 +16,11 @@
   border: vars.$item-border;
   background-color: vars.$item-body;
   outline: none;
+  cursor: pointer;
 }
 
 .item:hover {
-  outline: vars.$action-primary solid 0.1rem;
+  @include highlight()
 }
 
 .item-header {
@@ -82,4 +87,8 @@
   .contact:hover {
     background-color: vars.$action-primary-active;
   }
+}
+
+.highlight-item {
+  @include highlight()
 }

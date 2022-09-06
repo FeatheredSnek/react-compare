@@ -12,7 +12,7 @@ function getValueBounds(providersList, propName) {
 
 
 function sortByObjectProperty(objectsArray, propName) {
-  objectsArray.sort((objectA, objectB) => {
+  return objectsArray.sort((objectA, objectB) => {
     let a = objectA[propName]
     let b = objectB[propName]
     if (isNaN(a) || isNaN(b)) {
@@ -55,13 +55,14 @@ class App extends React.Component {
     super(props);
     // load mock
     const data = providersData
-    addColors(data, 80, 160)
+    addColors(data, 90, 155)
     this.state = {
       providers: data,
       displayedProviders: data,
       priceFilterValue: null,
       clustersFilterValue: null,
       sorting: 'name',
+      highlightedProviderId: null,
       // the data has already been preloaded, compute min/max values
       // through componentDidMount if it's not the case
       minPrice: Math.ceil(getValueBounds(providersData, 'price').min),
@@ -72,52 +73,62 @@ class App extends React.Component {
     }
   }
 
+  handleHighlightChange = (id) => {
+    if (id === null) {
+      this.setState({highlightedProviderId: null})
+    }
+    else {
+      this.setState({highlightedProviderId: id})
+    }
+  }
+
   handleFilterPriceChange = (userMaxPrice) => {
-    this.setState({priceFilterValue: userMaxPrice})
-    this.updateProviderList()
+    this.setState({
+      priceFilterValue: userMaxPrice,
+      displayedProviders: this.filterProviderList(userMaxPrice, this.state.clustersFilterValue)
+    })
   }
 
   handleFilterClustersChange = (userClusters) => {
-    this.setState({clustersFilterValue: userClusters})
-    this.updateProviderList()
+    this.setState({
+      clustersFilterValue: userClusters,
+      displayedProviders: this.filterProviderList(this.state.priceFilterValue, userClusters)
+    })
   }
 
   handleSortingChange = (userSorting) => {
-    this.setState({sorting: userSorting})
-    this.updateProviderList()
+    this.setState({
+      sorting: userSorting,
+      displayedProviders: this.sortProviderList(userSorting)
+    })
   }
 
   handleFilterReset = () => {
     this.setState({
       priceFilterValue: null,
-      clustersFilterValue: null
+      clustersFilterValue: null,
+      displayedProviders: this.filterProviderList(null, null)
     })
-    this.updateProviderList()
   }
 
-  // this helper is a separate setState call that is always fired 
-  // after a certain state filter/sort setting has been applied
-  updateProviderList = () => {
-    this.setState({displayedProviders: this.computeProviders()})
+  filterProviderList = (priceFilterValue, clustersFilterValue) => {
+    let providerList = this.state.providers
+    if (!(isNaN(priceFilterValue) || priceFilterValue === null)) {
+      providerList = this.state.providers.filter(
+        el => el.price <= priceFilterValue
+      )
+    }
+    if (!(isNaN(clustersFilterValue) || clustersFilterValue === null)) {
+      providerList = providerList.filter(
+        el => el.clusters >= clustersFilterValue
+      )
+    }
+    providerList = sortByObjectProperty(providerList, this.state.sorting)
+    return providerList
   }
-  
-  computeProviders = () => {
-    let filtered
-    if (!(isNaN(this.state.priceFilterValue) || this.state.priceFilterValue === null)) {
-      filtered = this.state.providers.filter(
-        el => el.price <= this.state.priceFilterValue
-      )
-    }
-    else {
-      filtered = this.state.providers
-    }
-    if (!(isNaN(this.state.clustersFilterValue) || this.state.clustersFilterValue === null)) {
-      filtered = filtered.filter(
-        el => el.clusters >= this.state.clustersFilterValue
-      )
-    }
-    sortByObjectProperty(filtered, this.state.sorting)
-    return filtered
+
+  sortProviderList = (sorting) => {
+    return sortByObjectProperty(this.state.displayedProviders, sorting)
   }
 
   computeMinPrice = () => {
@@ -160,6 +171,8 @@ class App extends React.Component {
         <ProvidersList 
           providers={this.state.displayedProviders} 
           sorting={this.state.sorting}
+          hoverHandler={this.handleHighlightChange}
+          highlight={this.state.highlightedProviderId}
         />
         <div className="graphs">
           <Graph
@@ -167,18 +180,24 @@ class App extends React.Component {
             graphProperty="price"
             maxValue={this.state.maxPrice}
             values={this.state.displayedProviders}
+            onBarOver={this.handleHighlightChange}
+            highlight={this.state.highlightedProviderId}
           />
           <Graph
             header="Available clusters"
             graphProperty="clusters"
             maxValue={this.state.maxClusters}
             values={this.state.displayedProviders}
+            onBarOver={this.handleHighlightChange}
+            highlight={this.state.highlightedProviderId}
           />
           <Graph
             header="Memory per cluster"
             graphProperty="memory"
             maxValue={this.state.maxMemory}
             values={this.state.displayedProviders}
+            onBarOver={this.handleHighlightChange}
+            highlight={this.state.highlightedProviderId}
           />
         </div>
       </div>
@@ -189,8 +208,6 @@ class App extends React.Component {
 
 function ProvidersList(props) {
   const currentProviders = props.providers
-  const currentSorting = props.sorting
-  // sortByObjectProperty(currentProviders, currentSorting)
   const providerItems = currentProviders.map((provider) => 
     <ProviderItem 
       key={provider.id}
@@ -201,6 +218,8 @@ function ProvidersList(props) {
       memory={provider.memory}
       info={provider.info}
       hue={provider.hue}
+      onItemOver={props.hoverHandler}
+      highlight={props.highlight}
     />
   )
   if (providerItems.length > 0) {
@@ -211,6 +230,7 @@ function ProvidersList(props) {
     )
   }
   else {
+    // TODO style error message?
     return(
       <div>
         <h3>
@@ -223,12 +243,20 @@ function ProvidersList(props) {
 
 
 function ProviderItem(props) {
+  let itemClass = 'item '
+  if (props.id === props.highlight) {
+    itemClass += 'highlight-item'
+  }
   return (
-    <div className="item">
+    <div 
+      className={itemClass}
+      onPointerOver={(e) => props.onItemOver(props.id)}
+      onPointerLeave={(e) => props.onItemOver(null)}
+    >
       <div className="item-header">
         <div>{props.name}</div>
         <div className="badges">
-          <div></div>
+          <div>{/* TODO best price/clusters/memory badges */}</div>
           <div style={{backgroundColor: getBarHSL(props.hue)}}/>
         </div>
       </div>
@@ -251,10 +279,10 @@ function ProviderItem(props) {
       </div>
       <div className="item-buttons">
         <button className="expand">
-          See more
+          See more {/*TODO collapsable info*/}
         </button>
         <button className="contact">
-          Contact provider
+          Contact provider {/*TODO cta mock action?*/}
         </button>
       </div>
       
@@ -290,11 +318,11 @@ class Filters extends React.Component {
     })
     this.props.onFilterReset()
   }
-  //{`(from ${this.props.minPrice} to ${this.props.maxPrice})`}
+
   render() {
     return (
       <div className="pane">
-        <h2>Filters</h2>
+        <h2>Filters {/*TODO collapsable panes?*/}</h2>
         <fieldset className="pane-contents filter-settings">
           <div className="setting">
             <input 
@@ -328,11 +356,13 @@ class Filters extends React.Component {
                 Available clusters 
               </label>
               <label htmlFor="cluster-range">
-                min <strong>${this.state.currentClustersFilterValue}</strong>
+                {/* TODO initialize at minimum */}
+                min <strong>{this.state.currentClustersFilterValue} clusters</strong>
               </label>
             </div>
           </div>
-          {/* <button id="clear" type="button" onClick={this.handleResetClick}>
+          {/* TODO clear filters button 
+            <button id="clear" type="button" onClick={this.handleResetClick}>
             Clear filters
           </button> */}
         </fieldset>
@@ -351,7 +381,6 @@ class Sorting extends React.Component {
   }
 
   handleSelectionChange = (e) => {
-    console.log(e.target.id);
     this.setState({sorting: e.target.id})
     this.props.onSortingChange(e.target.id)
   }
@@ -404,14 +433,23 @@ class Sorting extends React.Component {
   }
 }
 
+
 function Graph(props) {
   const bars = props.values.map(el => {
     const barStyle = {
       backgroundColor: getBarHSL(el.hue),
       height: `${el[props.graphProperty] / props.maxValue * 100}%`
     }
+    const barClass = el.id === props.highlight ? 'highlight-bar' : ''
     return (
-      <div style={barStyle} key={el.id}></div>
+      <div 
+        style={barStyle} 
+        key={el.id}
+        providerid={el.id}
+        className={barClass}
+        onPointerOver={(e) => props.onBarOver(el.id)}
+        onPointerLeave={(e) => props.onBarOver(null)}
+      ></div>
     )
   })
   return(
@@ -424,12 +462,6 @@ function Graph(props) {
   )
 }
 
-// class Graph extends React.Component {
-//   constructor(props) {
-//     super(props)
-
-//   }
-// }
 
 const appRoot = ReactDOM.createRoot(document.getElementById('root'));
 appRoot.render(<App/>);
