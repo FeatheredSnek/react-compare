@@ -27,12 +27,38 @@ function sortByObjectProperty(objectsArray, propName) {
 }
 
 
+function addColors(objectsArray, totalShift, baseHue) {
+  const hues = []
+  const shift = totalShift / objectsArray.length
+  for (let i = 0; i < objectsArray.length; i++) {
+    hues.push(Math.floor(shift * i) + baseHue)
+  }
+  // shuffle hues a bit so the graphs look better for the initial presentation
+  // also laughing at dudes using Fisher-Yates to display 4 out of 10 dog pictures
+  hues.sort(() => 0.5 - Math.random())
+  objectsArray.forEach(element => {
+    element.hue = hues[objectsArray.indexOf(element)]
+  })
+}
+
+
+// quickly set base saturation and lightness for graph bars
+function getBarHSL(hue) {
+  const s = 0.5
+  const l = 0.7
+  return `hsl(${hue}, ${s*100}%, ${l*100}%)`
+}
+
+
 class App extends React.Component {
   constructor(props){
     super(props);
+    // load mock
+    const data = providersData
+    addColors(data, 80, 160)
     this.state = {
-      providers: providersData,
-      displayedProviders: providersData,
+      providers: data,
+      displayedProviders: data,
       priceFilterValue: null,
       clustersFilterValue: null,
       sorting: 'name',
@@ -174,6 +200,7 @@ function ProvidersList(props) {
       clusters={provider.clusters}
       memory={provider.memory}
       info={provider.info}
+      hue={provider.hue}
     />
   )
   if (providerItems.length > 0) {
@@ -201,8 +228,8 @@ function ProviderItem(props) {
       <div className="item-header">
         <div>{props.name}</div>
         <div className="badges">
-          <div/>
-          <div/>
+          <div></div>
+          <div style={{backgroundColor: getBarHSL(props.hue)}}/>
         </div>
       </div>
       <div className="item-info">
@@ -380,7 +407,7 @@ class Sorting extends React.Component {
 function Graph(props) {
   const bars = props.values.map(el => {
     const barStyle = {
-      backgroundColor: '#79D9D9',
+      backgroundColor: getBarHSL(el.hue),
       height: `${el[props.graphProperty] / props.maxValue * 100}%`
     }
     return (
