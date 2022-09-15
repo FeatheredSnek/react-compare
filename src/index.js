@@ -37,6 +37,19 @@ function sortByObjectProperty(objectsArray, propName) {
 }
 
 
+function sortItemsBy(arr, propName) {
+  if (propName == 'price') {
+    return sortByObjectProperty(arr, propName)
+  }
+  else if (propName == 'clusters' || propName == 'memory') {
+    return sortByObjectProperty(arr, propName).reverse()
+  }
+  else {
+    return arr
+  }
+}
+
+
 function addColors(objectsArray, totalShift, baseHue) {
   const hues = []
   const shift = totalShift / objectsArray.length
@@ -151,12 +164,12 @@ class App extends React.Component {
         el => el.clusters >= clustersFilterValue
       )
     }
-    providerList = sortByObjectProperty(providerList, this.state.sorting)
+    providerList = sortItemsBy(providerList, this.state.sorting)
     return providerList
   }
 
   sortProviderList = (sorting) => {
-    return sortByObjectProperty(this.state.displayedProviders, sorting)
+    return sortItemsBy(this.state.displayedProviders, sorting)
   }
 
   render() {
