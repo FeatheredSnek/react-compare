@@ -1,13 +1,23 @@
 import providersData from "/data.js";
 
 
-function getValueBounds(providersList, propName) {
-  let values = providersList.map(item => item[propName])
-  values.sort((a, b) => a - b)
+function getMinMax(providersList, propName) {
+  let items = providersList.map(item => {
+    return {
+      id: item.id,
+      value: item[propName]
+    }
+  })
+  items.sort((a, b) => a.value - b.value)
   return {
-    min: values[0],
-    max: values[values.length-1]
+    min: items[0].value,
+    max: items[items.length-1].value,
+    minId: items[0].id,
+    maxId: items[items.length-1].id,
   }
+  // returns minId and maxId rather randomly when there are 
+  // two items with the same value, a real world implementation 
+  // would surely need some additional logic for granting 'best of' badges
 }
 
 
@@ -68,11 +78,18 @@ class App extends React.Component {
     const data = providersData
     // the data has already been preloaded so I can set the values here 
     // if it's not the case then compute min/max vals in componentDidMount 
-    this.minPrice = Math.ceil(getValueBounds(data, 'price').min)
-    this.maxPrice = Math.floor(getValueBounds(data, 'price').max)
-    this.minClusters = getValueBounds(data, 'clusters').min
-    this.maxClusters = getValueBounds(data, 'clusters').max
-    this.maxMemory = getValueBounds(data, 'memory').max
+    const priceMinMax = getMinMax(data, 'price')
+    const clustersMinMax = getMinMax(data, 'clusters')
+    const memoryMinMax = getMinMax(data, 'memory')
+    this.minPrice = Math.ceil(priceMinMax.min)
+    this.maxPrice = Math.floor(priceMinMax.max)
+    this.minClusters = clustersMinMax.min
+    this.maxClusters = clustersMinMax.max
+    this.maxMemory = memoryMinMax.max
+    // see the comment @ getMinMax about multiple best cases
+    this.bestPriceId = priceMinMax.minId
+    this.bestClustersId = clustersMinMax.maxId
+    this.bestMemoryId = memoryMinMax.maxId
     addColors(data, 90, 155)
     this.state = {
       providers: data,
@@ -142,26 +159,6 @@ class App extends React.Component {
     return sortByObjectProperty(this.state.displayedProviders, sorting)
   }
 
-  computeMinPrice = () => {
-    return Math.floor(getValueBounds(this.state.providers, 'price').min)
-  }
-
-  computeMaxPrice = () => {
-    return Math.ceil(getValueBounds(this.state.providers, 'price').max)
-  }
-
-  computeMinClusters = () => {
-    return getValueBounds(this.state.providers, 'clusters').min
-  }
-
-  computeMaxClusters = () => {
-    return getValueBounds(this.state.providers, 'clusters').max
-  }
-
-  computeMaxMemory = () => {
-    return getValueBounds(this.state.providers, 'memory').max
-  }
-
   render() {
     return (
       <div className="app">
@@ -208,6 +205,9 @@ class App extends React.Component {
         <ProvidersList 
           providers={this.state.displayedProviders} 
           sorting={this.state.sorting}
+          bestPriceId={this.bestPriceId}
+          bestClustersId={this.bestClustersId}
+          bestMemoryId={this.bestMemoryId}
           hoverHandler={this.handleHighlightChange}
           highlight={this.state.highlightedProviderId}
         />
@@ -219,20 +219,31 @@ class App extends React.Component {
 
 function ProvidersList(props) {
   const currentProviders = props.providers
-  const providerItems = currentProviders.map((provider) => 
-    <ProviderItem 
-      key={provider.id}
-      id={provider.id}
-      name={provider.name}
-      price={provider.price}
-      clusters={provider.clusters}
-      memory={provider.memory}
-      info={provider.info}
-      hue={provider.hue}
-      onItemOver={props.hoverHandler}
-      highlight={props.highlight}
-    />
-  )
+  const providerItems = currentProviders.map((provider) => {
+    let bestPrice = false
+    let bestClusters = false
+    let bestMemory = false
+    if (provider.id === props.bestPriceId) bestPrice = true
+    if (provider.id === props.bestClustersId) bestClusters = true
+    if (provider.id === props.bestMemoryId) bestMemory = true
+    return (
+      <ProviderItem 
+        key={provider.id}
+        id={provider.id}
+        name={provider.name}
+        price={provider.price}
+        clusters={provider.clusters}
+        memory={provider.memory}
+        info={provider.info}
+        hue={provider.hue}
+        onItemOver={props.hoverHandler}
+        highlight={props.highlight}
+        bestPrice={bestPrice}
+        bestClusters={bestClusters}
+        bestMemory={bestMemory}
+      />
+    )
+  })
   if (providerItems.length > 0) {
     return (
       <div className="list">
@@ -258,6 +269,9 @@ function ProviderItem(props) {
   if (props.id === props.highlight) {
     itemClass += 'highlight-item'
   }
+  let priceBadge = props.bestPrice ? <div>#1 price</div> : null
+  let clusterBadge = props.bestClusters ? <div>#1 clusters</div> : null
+  let memoryBadge = props.bestMemory ? <div>#1 memory</div> : null
   return (
     <div 
       className={itemClass}
@@ -267,8 +281,10 @@ function ProviderItem(props) {
       <div className="item-header">
         <div>{props.name}</div>
         <div className="badges">
-          <div>{/* TODO best price/clusters/memory badges */}</div>
-          <div style={{backgroundColor: getBarHSL(props.hue)}}/>
+          {priceBadge}
+          {clusterBadge}
+          {memoryBadge}
+          <div className="round" style={{backgroundColor: getBarHSL(props.hue)}}/>
         </div>
       </div>
       <div className="item-info">
@@ -288,7 +304,7 @@ function ProviderItem(props) {
           <span>MB/cluster</span>
         </div>
       </div>
-      <div class="item-details hidden" id={`${props.id}-details`}>
+      <div className="item-details hidden" id={`${props.id}-details`}>
         {props.info}
       </div>
       <div className="item-buttons">
@@ -299,7 +315,7 @@ function ProviderItem(props) {
           onClick={() => toggleDetails(props.id)}
         >
           <span id={`${props.id}-button-more`}>See more</span>
-          <span id={`${props.id}-button-less`} class="hidden">Hide details</span>
+          <span id={`${props.id}-button-less`} className="hidden">Hide details</span>
         </button>
         <button className="contact">
           Contact provider

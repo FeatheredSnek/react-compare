@@ -31,13 +31,20 @@
   align-items: center;
   justify-content: space-between;
   .badges {
+    display: flex;
     div {
+      font-weight: normal;
+      font-size: 0.6rem;
       display: inline-block;
-      width: 1.5rem;
+      min-width: 1.5rem;
       height: 1.5rem;
-      background-color: goldenrod;
-      border-radius: 100%;
+      background-color: vars.$badge;
+      border-radius: 0.75rem;
+      padding: 0 0.5rem;
       margin-left: 0.6rem;
+      line-height: 1.5rem;
+      text-align: center;
+      vertical-align: middle;
     }
   }
 }
@@ -107,10 +114,13 @@
     font-size: 1.2rem;
     .badges {
       div {
-        display: inline-block;
-        width: 1rem;
+        font-size: 0.4rem;
         height: 1rem;
+        min-width: 1rem;
         margin-left: 0.4rem;
+        border-radius: 0.5rem;
+        padding: 0 0.3rem;
+        line-height: 1rem;
       }
     }
   }
