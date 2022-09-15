@@ -24,6 +24,7 @@ header {
 }
 
 // grid system
+// setup classes
 
 @mixin sticky {
   align-self: start;
@@ -32,11 +33,11 @@ header {
 }
 
 .app {
-  max-width: 1280px;
-  margin: auto;
+  padding: 0 1rem;
   display: grid;
-  grid-template-columns: 16rem auto 16rem;
-  grid-template-areas: "options list graphs";
+  margin: auto;
+  max-width: 1280px;
+  row-gap: 2.5rem;
   column-gap: 2.5rem;
 }
 
@@ -45,11 +46,110 @@ header {
 }
 
 .options {
-  @include sticky;
   grid-area: options;
 }
 
 .graphs {
-  @include sticky;
   grid-area: graphs;
 }
+
+// breakpoints and media queries:
+
+// lg+
+
+// sticky options & graphs at lg+ sizes
+@media (min-width: 1024px) {
+  .options {
+    @include sticky;
+  }
+  .graphs {
+    @include sticky;
+  }    
+}
+// full size desktop
+@media (min-width: 1280px) {
+  .app {
+    grid-template-rows: none;
+    grid-template-columns: 16rem auto 16rem;
+    grid-template-areas: "options list graphs";
+  }
+}
+// smaller sidebars
+@media (min-width: 1140px) and (max-width: 1279.999px) {
+  .app {
+    grid-template-rows: none;
+    grid-template-columns: 14rem auto 14rem;
+    grid-template-areas: "options list graphs";
+    column-gap: 1.5rem !important;
+  }
+}
+// even smaller sidebars
+@media (min-width: 1024px) and (max-width: 1139.999px) {
+  .app {
+    grid-template-rows: none;
+    grid-template-columns: 12rem auto 12rem;
+    grid-template-areas: "options list graphs";
+    column-gap: 1.5rem !important;
+  }
+}
+
+// sm +
+
+@media (min-width: 768px) and (max-width: 1023.999px) {
+  .app {
+    grid-template-rows: none;
+    grid-template-columns: 16rem auto;
+    grid-template-areas: "options list" "graphs list";
+    grid-auto-flow: column;
+    column-gap: 1.5rem !important;
+  }
+  .list {
+    height: 1px; // see below
+  }
+}
+// smaller sidebars
+@media (min-width: 768px) and (max-width: 860px) {
+  .app {
+    grid-template-columns: 12rem auto;
+  }
+}
+
+// default - small screen portrait
+
+@media (max-width: 767.999px) {
+  .app {
+    grid-template-columns: none;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+      "options"
+      "list"
+    ;
+    padding: 0 0.5rem;
+    row-gap: 1.5rem;
+  }
+  .graphs {
+    display: none;
+  }
+}
+
+/* the reasoning for height 1px is to flow elements without specified height
+into the first column of the grid - compare the auto and 1px heights of .list:
+
+L {height: auto};   L {height: 1px};
+|----|------|       |----|------|
+| FF | LLLL |       | FF | LLLL |
+| FF | LLLL |       | FF | LLLL |
+|    | LLLL |       |----|-LLLL-|
+|    | LLLL |       | GG | LLLL |
+|    | LLLL |       | GG | LLLL |
+|    | LLLL |       |----|-LLLL-|
+|    | LLLL |              LLLL 
+|----|------|
+| GG |      |
+| GG |      |
+|----|------|
+
+with 1px grid sizes are computed according _only_ to F and G
+while L is overflowing (as indicated by -LLLL- going through the grid gap)
+the downside is that @sticky does not work properly (as it sticks to 1px height)
+but the stickiness is not desireable in this case anyway */

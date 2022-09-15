@@ -38,6 +38,16 @@ input {
   }
 }
 
+@media (max-width: 767.999px) {
+  .sorting-options {
+    div {
+      margin-bottom: 0.4rem;
+    }
+  }
+}
+
+// radio styling
+
 input[type="radio"] {
   margin-right: 0.6rem;
   height: 0.7rem;

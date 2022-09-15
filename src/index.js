@@ -264,17 +264,17 @@ function ProviderItem(props) {
         <div>
           <strong>${props.price.toString()}</strong>
           <br/>
-          per month
+          <span>per month</span>
         </div>
         <div>
           <strong>{props.clusters.toString()}</strong>
           <br/>
-          clusters
+          <span>clusters</span>
         </div>
         <div>
           <strong>{props.memory.toString()}</strong>
           <br/>
-          MB/cluster
+          <span>MB/cluster</span>
         </div>
       </div>
       <div className="item-buttons">
