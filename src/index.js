@@ -66,6 +66,13 @@ class App extends React.Component {
     super(props);
     // load mock
     const data = providersData
+    // the data has already been preloaded so I can set the values here 
+    // if it's not the case then compute min/max vals in componentDidMount 
+    this.minPrice = Math.ceil(getValueBounds(data, 'price').min)
+    this.maxPrice = Math.floor(getValueBounds(data, 'price').max)
+    this.minClusters = getValueBounds(data, 'clusters').min
+    this.maxClusters = getValueBounds(data, 'clusters').max
+    this.maxMemory = getValueBounds(data, 'memory').max
     addColors(data, 90, 155)
     this.state = {
       providers: data,
@@ -74,13 +81,6 @@ class App extends React.Component {
       clustersFilterValue: null,
       sorting: 'name',
       highlightedProviderId: null,
-      // the data has already been preloaded, compute min/max values
-      // through componentDidMount if it's not the case
-      minPrice: Math.ceil(getValueBounds(providersData, 'price').min),
-      maxPrice: Math.floor(getValueBounds(providersData, 'price').max),
-      minClusters: getValueBounds(providersData, 'clusters').min,
-      maxClusters: getValueBounds(providersData, 'clusters').max,
-      maxMemory: getValueBounds(providersData, 'memory').max,
     }
   }
 
@@ -167,10 +167,10 @@ class App extends React.Component {
       <div className="app">
         <div className="options">
           <Filters 
-            minPrice={this.state.minPrice} 
-            maxPrice={this.state.maxPrice}
-            minClusters={this.state.minClusters}
-            maxClusters={this.state.maxClusters}
+            minPrice={this.minPrice} 
+            maxPrice={this.maxPrice}
+            minClusters={this.minClusters}
+            maxClusters={this.maxClusters}
             onFilterPriceChange={this.handleFilterPriceChange}
             onFilterClustersChange={this.handleFilterClustersChange}
             onFilterReset={this.handleFilterReset}
@@ -183,7 +183,7 @@ class App extends React.Component {
           <Graph
             header="Cost per month"
             graphProperty="price"
-            maxValue={this.state.maxPrice}
+            maxValue={this.maxPrice}
             values={this.state.displayedProviders}
             onBarOver={this.handleHighlightChange}
             highlight={this.state.highlightedProviderId}
@@ -191,7 +191,7 @@ class App extends React.Component {
           <Graph
             header="Available clusters"
             graphProperty="clusters"
-            maxValue={this.state.maxClusters}
+            maxValue={this.maxClusters}
             values={this.state.displayedProviders}
             onBarOver={this.handleHighlightChange}
             highlight={this.state.highlightedProviderId}
@@ -199,7 +199,7 @@ class App extends React.Component {
           <Graph
             header="Memory per cluster"
             graphProperty="memory"
-            maxValue={this.state.maxMemory}
+            maxValue={this.maxMemory}
             values={this.state.displayedProviders}
             onBarOver={this.handleHighlightChange}
             highlight={this.state.highlightedProviderId}
