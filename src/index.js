@@ -168,12 +168,6 @@ class App extends React.Component {
             onSortingChange={this.handleSortingChange}
           />
         </div>
-        <ProvidersList 
-          providers={this.state.displayedProviders} 
-          sorting={this.state.sorting}
-          hoverHandler={this.handleHighlightChange}
-          highlight={this.state.highlightedProviderId}
-        />
         <div className="graphs">
           <Graph
             header="Cost per month"
@@ -200,6 +194,12 @@ class App extends React.Component {
             highlight={this.state.highlightedProviderId}
           />
         </div>
+        <ProvidersList 
+          providers={this.state.displayedProviders} 
+          sorting={this.state.sorting}
+          hoverHandler={this.handleHighlightChange}
+          highlight={this.state.highlightedProviderId}
+        />
       </div>
     )
   }
