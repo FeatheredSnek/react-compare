@@ -84,6 +84,12 @@ function toggleDetails(providerId) {
 }
 
 
+function togglePane(paneId) {
+  const pane = document.getElementById(paneId)
+  pane.classList.toggle('hidden')
+}
+
+
 class App extends React.Component {
   constructor(props){
     super(props);
@@ -394,12 +400,11 @@ class Filters extends React.Component {
   render() {
     return (
       <div className="pane">
-        {/*TODO collapsable panes?*/}
-        <h2>
+        <h2 onClick={() => togglePane('filter')}>
           <span>Filters</span>
           {this.clearButton()}
         </h2>
-        <fieldset className="pane-contents filter-settings">
+        <fieldset id="filter" className="pane-contents filter-settings">
           <div className="setting">
             <input 
               id="price-range" 
@@ -461,8 +466,8 @@ class Sorting extends React.Component {
   render() {
     return (
       <div className="pane">
-        <h2>Sort by:</h2>
-        <fieldset className="pane-contents sorting-options">
+        <h2 onClick={() => togglePane('sorting')}>Sort by:</h2>
+        <fieldset id="sorting" className="pane-contents sorting-options">
           <div>
             <input 
               type="radio" 

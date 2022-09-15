@@ -46,6 +46,13 @@ input {
   }
 }
 
+@media (min-width: 768px) {
+  .filter-settings,
+  .sorting-options {
+    display: block !important;
+  }
+}
+
 // radio styling
 
 input[type="radio"] {
