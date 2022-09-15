@@ -50,6 +50,17 @@ function getBarHSL(hue) {
 }
 
 
+// item details toggler
+function toggleDetails(providerId) {
+  const toggled = document.getElementById(`${providerId}-details`)
+  const buttonTextMore = document.getElementById(`${providerId}-button-more`)
+  const buttonTextLess = document.getElementById(`${providerId}-button-less`)
+  toggled.classList.toggle('hidden')
+  buttonTextMore.classList.toggle('hidden')
+  buttonTextLess.classList.toggle('hidden')
+}
+
+
 class App extends React.Component {
   constructor(props){
     super(props);
@@ -277,15 +288,23 @@ function ProviderItem(props) {
           <span>MB/cluster</span>
         </div>
       </div>
+      <div class="item-details hidden" id={`${props.id}-details`}>
+        {props.info}
+      </div>
       <div className="item-buttons">
-        <button className="expand">
-          See more {/*TODO collapsable info*/}
+        {/* using external onClick function cause I really want to keep it stateless */}
+        <button 
+          className="expand" 
+          type="button" 
+          onClick={() => toggleDetails(props.id)}
+        >
+          <span id={`${props.id}-button-more`}>See more</span>
+          <span id={`${props.id}-button-less`} class="hidden">Hide details</span>
         </button>
         <button className="contact">
-          Contact provider {/*TODO cta mock action?*/}
+          Contact provider
         </button>
       </div>
-      
     </div>
   )
 }

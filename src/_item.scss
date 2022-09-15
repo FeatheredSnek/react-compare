@@ -60,6 +60,14 @@
   }
 }
 
+.item-details {
+  padding: 0.5rem 0;
+}
+
+.hidden {
+  display: none;
+}
+
 .item-buttons {
   display: flex;
   flex-direction: row;
