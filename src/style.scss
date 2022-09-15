@@ -23,6 +23,12 @@ header {
   margin: 1rem 0;
 }
 
+button {
+  border: none;
+  font-family: vars.$fonts;
+  cursor: pointer;
+}
+
 // grid system
 // setup classes
 

@@ -265,7 +265,6 @@ function ProvidersList(props) {
     )
   }
   else {
-    // TODO style error message?
     return(
       <div>
         <h3>
@@ -344,33 +343,62 @@ class Filters extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentPriceFilterValue: null,
-      currentClustersFilterValue: null
+      currentPriceFilterValue: props.maxPrice,
+      currentClustersFilterValue: props.minClusters,
+      priceFilterActive: false,
+      clustersFilterActive: false
     }
   }
 
   handlePriceChange = (e) => {
-    this.setState({currentPriceFilterValue: e.target.value})
+    let isActive = e.target.value != this.props.maxPrice ? true : false
+    this.setState({
+      currentPriceFilterValue: e.target.value,
+      priceFilterActive: isActive
+    })
     this.props.onFilterPriceChange(e.target.value)
   }
 
   handleClustersChange = (e) => {
-    this.setState({currentClustersFilterValue: e.target.value})
+    let isActive = e.target.value != this.props.minClusters ? true : false
+    this.setState({
+      currentClustersFilterValue: e.target.value,
+      clustersFilterActive: isActive
+    })
     this.props.onFilterClustersChange(e.target.value)
   }
 
   handleResetClick = () => {
     this.setState({
-      currentPriceFilterValue: null,
-      currentClustersFilterValue: null
+      currentPriceFilterValue: this.props.maxPrice,
+      currentClustersFilterValue: this.props.minClusters,
+      priceFilterActive: false,
+      clustersFilterActive: false
     })
     this.props.onFilterReset()
+  }
+
+  clearButton = () => {
+    if (this.state.priceFilterActive || this.state.clustersFilterActive) {
+      return (
+        <button id="clear" type="button" onClick={this.handleResetClick}>
+          Clear
+        </button>
+      )
+    }
+    else {
+      return null
+    }
   }
 
   render() {
     return (
       <div className="pane">
-        <h2>Filters {/*TODO collapsable panes?*/}</h2>
+        {/*TODO collapsable panes?*/}
+        <h2>
+          <span>Filters</span>
+          {this.clearButton()}
+        </h2>
         <fieldset className="pane-contents filter-settings">
           <div className="setting">
             <input 
@@ -379,6 +407,7 @@ class Filters extends React.Component {
               step="1"
               min={this.props.minPrice} 
               max={this.props.maxPrice}
+              value={this.state.currentPriceFilterValue}
               onChange={this.handlePriceChange}
             />
             <div className="filter-setting-label">
@@ -397,6 +426,7 @@ class Filters extends React.Component {
               step="1"
               min={this.props.minClusters} 
               max={this.props.maxClusters}
+              value={this.state.currentClustersFilterValue}
               onChange={this.handleClustersChange}
             />
             <div className="filter-setting-label">
@@ -404,15 +434,10 @@ class Filters extends React.Component {
                 Available clusters 
               </label>
               <label htmlFor="cluster-range">
-                {/* TODO initialize at minimum */}
-                min <strong>{this.state.currentClustersFilterValue} clusters</strong>
+                min <strong>{this.state.currentClustersFilterValue}</strong>
               </label>
             </div>
           </div>
-          {/* TODO clear filters button 
-            <button id="clear" type="button" onClick={this.handleResetClick}>
-            Clear filters
-          </button> */}
         </fieldset>
       </div>
     )

@@ -9,13 +9,29 @@
   @extend %block;
   margin-bottom: 1.5rem;
   h2 {
-    vertical-align: middle;
     height: 3rem;
     margin: 0;
     background-color: vars.$item-secondary;
     font-weight: normal;
     font-size: 1rem;
     padding: 0.8rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    button {
+      border: none;
+      font-weight: normal;
+      font-size: 0.6rem;
+      display: inline-block;
+      min-width: 1.5rem;
+      height: 1.5rem;
+      background-color: white;
+      border-radius: 0.75rem;
+      padding: 0 0.5rem;
+      margin-left: 0.6rem;
+      line-height: 1.5rem;
+      text-align: center;
+      vertical-align: middle;
+    }
   }
   .pane-contents {
     padding: 1.5rem 1.2rem;
