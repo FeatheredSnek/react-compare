@@ -3,6 +3,7 @@ $window: #ECEFF5;
 $item-body: #FCFCFC;
 $item-secondary: #CFD7E7;
 $control-header: #CFD7E7;
+$header: #CFD7E7;
 $action-primary: #DC9D89;
 $action-secondary: #CFD7E7;
 $action-primary-active: #DC7858;
@@ -14,3 +15,6 @@ $badge: #F1CF9C;
 // vars
 $fonts: 'Prompt', sans-serif;
 $item-border: 1px solid $item-secondary;
+
+// TODO dark mode
+// TODO prefers contrast

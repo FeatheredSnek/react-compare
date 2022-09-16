@@ -543,3 +543,11 @@ function Graph(props) {
 
 const appRoot = ReactDOM.createRoot(document.getElementById('root'));
 appRoot.render(<App/>);
+
+
+// mobile navigation
+const navToggle = document.getElementById('nav-toggle')
+navToggle.addEventListener('click', () => {
+  const nav = document.querySelector('nav')
+  nav.classList.toggle('hidden')
+})

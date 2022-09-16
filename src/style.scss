@@ -2,6 +2,7 @@
 @use 'item';
 @use 'controls';
 @use 'graph';
+@use 'header';
 
 // setup
 
@@ -17,16 +18,29 @@ body {
   background-color: vars.$window;
   font: 0.8rem vars.$fonts;
   color: vars.$text;
-}
-
-header {
-  margin: 1rem 0;
+  padding: 0;
+  margin: 0;
 }
 
 button {
   border: none;
   font-family: vars.$fonts;
   cursor: pointer;
+}
+
+a {
+  color: vars.$text;
+  text-decoration: none;
+}
+
+a:visited {
+  color: vars.$text;
+  text-decoration: none;
+}
+
+a:hover {
+  color: vars.$text;
+  text-decoration: none;
 }
 
 // grid system
