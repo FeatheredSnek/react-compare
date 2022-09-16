@@ -1,9 +1,5 @@
 @use 'vars';
 
-@mixin highlight {
-  outline: vars.$action-primary solid 0.1rem;
-}
-
 .graph {
   padding: 1.5rem 1.5rem;
   display: flex;
@@ -14,12 +10,13 @@
   div {
     cursor: pointer;
     flex-grow: 1;
+    @include vars.highlightable();
   }
   div:hover {
-    @include highlight();
+    @include vars.highlight();
   }
 }
 
 .highlight-bar {
-  @include highlight();
+  @include vars.highlight();
 }

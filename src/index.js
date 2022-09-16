@@ -73,12 +73,22 @@ function getBarHSL(hue) {
 }
 
 
+// generic class-based toggle helper
+function toggle(element) {
+  element.classList.toggle('hidden')
+  // wait one frame for display:none to be applied
+  setTimeout(() => {
+    element.classList.toggle('transparent')
+  }, 17);
+}
+
+
 // item details toggler
 function toggleDetails(providerId) {
-  const toggled = document.getElementById(`${providerId}-details`)
+  const details = document.getElementById(`${providerId}-details`)
   const buttonTextMore = document.getElementById(`${providerId}-button-more`)
   const buttonTextLess = document.getElementById(`${providerId}-button-less`)
-  toggled.classList.toggle('hidden')
+  toggle(details)
   buttonTextMore.classList.toggle('hidden')
   buttonTextLess.classList.toggle('hidden')
 }
@@ -86,7 +96,7 @@ function toggleDetails(providerId) {
 
 function togglePane(paneId) {
   const pane = document.getElementById(paneId)
-  pane.classList.toggle('hidden')
+  toggle(pane)
 }
 
 
@@ -322,7 +332,7 @@ function ProviderItem(props) {
           <span>MB/cluster</span>
         </div>
       </div>
-      <div className="item-details hidden" id={`${props.id}-details`}>
+      <div className="item-details hidden transparent" id={`${props.id}-details`}>
         {props.info}
       </div>
       <div className="item-buttons">
@@ -547,7 +557,7 @@ appRoot.render(<App/>);
 
 // mobile navigation
 const navToggle = document.getElementById('nav-toggle')
+const nav = document.querySelector('nav')
 navToggle.addEventListener('click', () => {
-  const nav = document.querySelector('nav')
-  nav.classList.toggle('hidden')
+  toggle(nav)
 })

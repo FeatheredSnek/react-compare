@@ -1,12 +1,9 @@
 @use 'vars';
 @use 'base';
 
-@mixin highlight {
-  outline: vars.$action-primary solid 0.1rem;  
-}
-
 .item {
   @extend %block;
+  @include vars.highlightable();
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -15,12 +12,11 @@
   margin-bottom: 1.5rem;
   border: vars.$item-border;
   background-color: vars.$item-body;
-  outline: none;
   cursor: pointer;
 }
 
 .item:hover {
-  @include highlight()
+  @include vars.highlight()
 }
 
 .item-header {
@@ -69,10 +65,7 @@
 
 .item-details {
   padding: 0.5rem 0;
-}
-
-.hidden {
-  display: none;
+  @include vars.transition(opacity);
 }
 
 .item-buttons {
@@ -106,7 +99,7 @@
 }
 
 .highlight-item {
-  @include highlight()
+  @include vars.highlight()
 }
 
 @media (max-width: 767.999px) {

@@ -11,10 +11,28 @@ $action-secondary-active: #B9CBEB;
 $text: #2B2D42;
 $text-inverted: white;
 $badge: #F1CF9C;
+// outline colors as rgba to control alpha animation
+$outline: rgba(220, 157, 137, 1); // same as action-primary
+$outline-hidden: rgba(220, 157, 137, 0);
 
 // vars
 $fonts: 'Prompt', sans-serif;
 $item-border: 1px solid $item-secondary;
 
+// transition mixins
+@mixin transition($property) {
+  transition: $property 0.2s ease-in;
+}
+@mixin highlight {
+  outline-color: $outline !important;
+  outline-style: solid !important;
+  outline-width: 0.1rem !important;
+}
+@mixin highlightable {
+  outline-color: $outline-hidden;
+  outline-style: none;
+  outline-width: 0.1rem;
+  transition: outline-color 0.2s ease-in; // transitioning outline-width looks jerky
+}
 // TODO dark mode
 // TODO prefers contrast

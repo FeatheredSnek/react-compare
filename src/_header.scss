@@ -80,6 +80,7 @@ nav {
     top: 3rem;
     background-color: vars.$item-body;
     border-top: vars.$item-border;
+    @include vars.transition(opacity);
     a {
       padding: 0;
       height: 3rem;
@@ -94,9 +95,10 @@ nav {
   }
 }
 
-// nav always visible on 640++, controlled by .hidden toggle on mobile 640--
+// nav always visible on 640++, controlled by .hidden and .transparent on mobile
 @media (min-width: 640px) {
   nav {
     display: flex !important;
+    opacity: 1 !important;
   }
 }

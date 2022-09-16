@@ -6,6 +6,7 @@ fieldset {
 
 input {
   accent-color: vars.$action-primary;
+  @include vars.transition(background-color);
 }
 
 .filter-settings {
@@ -38,6 +39,11 @@ input {
   }
 }
 
+.filter-settings,
+.sorting-options {
+  @include vars.transition(opacity);
+}
+
 @media (max-width: 767.999px) {
   .sorting-options {
     div {
@@ -46,10 +52,12 @@ input {
   }
 }
 
+// always display control panes on large screen
 @media (min-width: 768px) {
   .filter-settings,
   .sorting-options {
     display: block !important;
+    opacity: 1 !important;
   }
 }
 

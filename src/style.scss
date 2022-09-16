@@ -26,11 +26,13 @@ button {
   border: none;
   font-family: vars.$fonts;
   cursor: pointer;
+  @include vars.transition(background-color);
 }
 
 a {
   color: vars.$text;
   text-decoration: none;
+  @include vars.transition(color);
 }
 
 a:visited {
@@ -41,6 +43,16 @@ a:visited {
 a:hover {
   color: vars.$text;
   text-decoration: none;
+}
+
+// animation helpers
+
+.hidden {
+  display: none;
+}
+
+.transparent {
+  opacity: 0
 }
 
 // grid system
