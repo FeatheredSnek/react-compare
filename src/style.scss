@@ -61,6 +61,15 @@ a:hover {
   opacity: 0
 }
 
+// hiding the button label while keeping it in the a12 tree
+.invisible {
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  display: block;
+  overflow: hidden;
+}
+
 // grid system
 // setup classes
 
