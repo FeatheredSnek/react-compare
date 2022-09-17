@@ -3,7 +3,8 @@
 header {
   width: 100%;
   height: 3rem;
-  background-color: vars.$header;
+  background-color: vars.$item-secondary;
+  @include vars.darkmode('background-color', 'item-secondary');
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +31,9 @@ header {
     padding-right: 1rem;
     width: 2.5rem;
     height: 1.5rem;
-    img {
+    color: vars.$text;
+    @include vars.darkmode('color', 'text');
+    svg {
       width: 100%;
       height: 100%;
     }
@@ -47,7 +50,10 @@ nav {
   justify-content: flex-end;
   a {
     padding: 0 2rem;
-    border-right: 1px solid black;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: vars.$text;
+    @include vars.darkmode('border-right-color', 'text');
   }
   a:last-child {
     padding: 0 0 0 2rem;
@@ -60,6 +66,7 @@ nav {
 
 @media (max-width: 639.999px) {
   header {
+    margin-bottom: 1.5rem;
     div {
       padding: 0;
     }
@@ -79,12 +86,19 @@ nav {
     justify-content: flex-start;
     top: 3rem;
     background-color: vars.$item-body;
-    border-top: vars.$item-border;
+    @include vars.darkmode('background-color', 'item-body');
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: vars.$item-secondary;
+    @include vars.darkmode('border-top-color', 'item-secondary');
     @include vars.transition(opacity);
     a {
       padding: 0;
       height: 3rem;
-      border-bottom: vars.$item-border;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: vars.$item-secondary;
+      @include vars.darkmode('border-bottom-color', 'item-secondary');
       line-height: 3rem;
       text-align: center;
       vertical-align: middle;

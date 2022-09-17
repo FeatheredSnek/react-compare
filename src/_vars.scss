@@ -1,9 +1,11 @@
+@use "sass:map";
+
 // colors
 $window: #ECEFF5;
 $item-body: #FCFCFC;
 $item-secondary: #CFD7E7;
-$control-header: #CFD7E7;
-$header: #CFD7E7;
+// $control-header: #CFD7E7;
+// $header: #CFD7E7;
 $action-primary: #DC9D89;
 $action-secondary: #CFD7E7;
 $action-primary-active: #DC7858;
@@ -14,10 +16,18 @@ $badge: #F1CF9C;
 // outline colors as rgba to control alpha animation
 $outline: rgba(220, 157, 137, 1); // same as action-primary
 $outline-hidden: rgba(220, 157, 137, 0);
+// darkmode colors 
+$darkmode-map: (
+  window: #2E3033,
+  item-body: #3C3E42,
+  item-secondary: #6B7C99,
+  action-secondary: #6B7C99,
+  action-secondary-active: #97AED6,
+  text: #ECEFF5,
+);
 
 // vars
 $fonts: 'Prompt', sans-serif;
-$item-border: 1px solid $item-secondary;
 
 // transition mixins
 @mixin transition($property) {
@@ -34,5 +44,15 @@ $item-border: 1px solid $item-secondary;
   outline-width: 0.1rem;
   transition: outline-color 0.2s ease-in; // transitioning outline-width looks jerky
 }
-// TODO dark mode
-// TODO prefers contrast
+
+/*  dark mode mixin
+i prefer this simple approach over triple nested map loops that folks at medium suggest;
+just declare your default property: color-variable and if you want it to be dark adaptive
+@include this mixin with the same property and the same variable - this way you don't
+need to refactor all your p:$var into includes and you still use autocomplete - you just
+have to do the oh-so-hard-work of adding include and retyping two things */
+@mixin darkmode($property, $color-variable) {
+  @media (prefers-color-scheme: dark) {
+    #{$property}: map.get($darkmode-map, $color-variable)
+  }
+}

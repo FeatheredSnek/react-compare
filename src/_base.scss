@@ -1,8 +1,12 @@
 @use 'vars';
 
 %block {
-  border: vars.$item-border;
+  border-width: 1px;
+  border-style: solid;
+  border-color: vars.$item-secondary;
+  @include vars.darkmode('border-color', 'item-secondary');
   background-color: vars.$item-body;
+  @include vars.darkmode('background-color', 'item-body');
 }
 
 .pane {
@@ -12,6 +16,7 @@
     height: 3rem;
     margin: 0;
     background-color: vars.$item-secondary;
+    @include vars.darkmode('background-color', 'item-secondary');
     font-weight: normal;
     font-size: 1rem;
     padding: 0.8rem 1.2rem;

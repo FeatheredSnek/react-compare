@@ -10,8 +10,6 @@
   width: 100%;
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
-  border: vars.$item-border;
-  background-color: vars.$item-body;
   cursor: pointer;
 }
 
@@ -41,6 +39,7 @@
       line-height: 1.5rem;
       text-align: center;
       vertical-align: middle;
+      @include vars.darkmode('color', 'window')
     }
   }
 }
@@ -50,7 +49,10 @@
   line-height: 1.2;
   div {
     display: inline-block;
-    border-right: 1px solid black;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: vars.$text;
+    @include vars.darkmode('border-right-color', 'text');
     padding-right: 1.5rem;
     padding-left: 1.5rem
   }
@@ -84,9 +86,12 @@
   }
   .expand {
     background-color: vars.$action-secondary;
+    @include vars.darkmode('background-color', 'action-secondary');
+    @include vars.darkmode('color', 'text')
   }
   .expand:hover {
     background-color: vars.$action-secondary-active;
+    @include vars.darkmode('background-color', 'action-secondary-active');
   }
   .contact {
     font-weight: bold;
@@ -123,7 +128,6 @@
     width: 100%;
     div {
       display: inline-block;
-      border-right: 1px solid black;
       width: 33.3%;
       text-align: center;
       padding-left: 0;

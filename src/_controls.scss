@@ -71,8 +71,13 @@ input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
   border-radius: 50%;
-  border: 0.1rem solid vars.$item-body; // outer circle inner padding
+  // border is the outer circle inner padding
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: vars.$item-body;
+  @include vars.darkmode('border-color', 'item-body');
   background-color: vars.$item-body; // unchecked (empty) dot
+  @include vars.darkmode('background-color', 'item-body');
   box-shadow: 0 0 0 0.2rem vars.$action-primary; // outer circle thickness & color
 }
 
