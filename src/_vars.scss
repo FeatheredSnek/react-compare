@@ -21,7 +21,7 @@ $item-border: 1px solid $item-secondary;
 
 // transition mixins
 @mixin transition($property) {
-  transition: $property 0.2s ease-in;
+  transition: $property 0.2s ease-out;
 }
 @mixin highlight {
   outline-color: $outline !important;
