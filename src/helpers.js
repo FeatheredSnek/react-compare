@@ -35,7 +35,7 @@ export function sortByObjectProperty(objectsArray, propName) {
 
 
 export function sortItemsBy(arr, propName) {
-  if (propName == 'price') {
+  if (propName == 'price' || propName == 'name') {
     return sortByObjectProperty(arr, propName)
   }
   else if (propName == 'clusters' || propName == 'memory') {
