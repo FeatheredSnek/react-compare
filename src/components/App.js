@@ -10,7 +10,7 @@ class App extends React.Component {
   constructor(props){
     super(props);
     // load mock
-    const data = providersData
+    const data = sortItemsBy(providersData, 'name')
     // the data has already been preloaded so I can set the values here 
     // if it's not the case then compute min/max vals in componentDidMount 
     const priceMinMax = getMinMax(data, 'price')
