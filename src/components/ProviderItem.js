@@ -25,7 +25,7 @@ export default function ProviderItem(props) {
       </div>
       <div className="item-info">
         <div>
-          <strong>${props.price.toString()}</strong>
+          <strong>${props.price.toPrecision(4)}</strong>
           <br/>
           <span>per month</span>
         </div>
